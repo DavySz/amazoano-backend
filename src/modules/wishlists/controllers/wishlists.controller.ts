@@ -1,21 +1,25 @@
 import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { CreateItemDTO } from '../dtos/create-item.dto';
 import { WishlistsService } from '../services/wishlists.service';
 
 @Controller('wishlists')
 export class WishlistsController {
   constructor(private readonly wishlistsService: WishlistsService) {}
-  @Get('find-all/:id')
-  findAllItemsByUser(@Param('id') id: string) {
-    return this.wishlistsService.findAllItemsByUser(id);
+  @Get('find-all/:userId')
+  find(@Param('userId') userId: string) {
+    return this.wishlistsService.find(userId);
   }
 
-  @Post('add')
-  addNewItem(@Body() body) {
-    return this.wishlistsService.addNewItem(body);
+  @Post('add/:userId')
+  create(
+    @Param('userId') userId: string,
+    @Body() createItemDTO: CreateItemDTO,
+  ) {
+    return this.wishlistsService.create(userId, createItemDTO);
   }
 
   @Delete('delete/:id')
-  deleteItem(@Param('id') id: string) {
-    return this.wishlistsService.deleteItem(id);
+  delete(@Param('id') id: string) {
+    return this.wishlistsService.delete(id);
   }
 }

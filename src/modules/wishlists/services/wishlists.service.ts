@@ -1,25 +1,32 @@
 import { Injectable } from '@nestjs/common';
+import { CreateItemDTO } from '../dtos/create-item.dto';
 import { wishlistsItem } from '../entities/wishlistsItem.entity';
 
 @Injectable()
 export class WishlistsService {
   private wishListsItems: wishlistsItem[] = [];
 
-  findAllItemsByUser(id: string) {
-    const items = this.wishListsItems.filter((item) => item.userId === id);
+  find(userId: string) {
+    const items = this.wishListsItems.filter((item) => item.userId === userId);
     return items;
   }
 
-  addNewItem(wishlistItemDTO: any) {
-    this.wishListsItems.push(wishlistItemDTO);
+  create(userId: string, createItemDTO: CreateItemDTO) {
+    const newItem = Object.assign(createItemDTO, { userId: userId });
+    this.wishListsItems.push(newItem);
     return;
   }
 
-  deleteItem(id: string) {
+  delete(itemId: string) {
     const indexItem = this.wishListsItems.findIndex(
-      (item) => item.id === Number(id),
+      (item) => item.id === Number(itemId),
     );
-    this.wishListsItems.splice(indexItem, 1);
+
+    if (indexItem >= 0) {
+      this.wishListsItems.splice(indexItem, 1);
+      return;
+    }
+
     return;
   }
 }
