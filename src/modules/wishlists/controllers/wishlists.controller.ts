@@ -6,8 +6,8 @@ import { WishlistsService } from '../services/wishlists.service';
 export class WishlistsController {
   constructor(private readonly wishlistsService: WishlistsService) {}
   @Get('find-all/:userId')
-  find(@Param('userId') userId: string) {
-    return this.wishlistsService.find(userId);
+  findAll(@Param('userId') userId: string) {
+    return this.wishlistsService.findAll(userId);
   }
 
   @Post('add/:userId')

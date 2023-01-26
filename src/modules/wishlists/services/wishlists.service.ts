@@ -1,32 +1,33 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateItemDTO } from '../dtos/create-item.dto';
-import { wishlistsItem } from '../entities/wishlistsItem.entity';
+import { Wishlist } from '../entities/wishlist.entity';
 
 @Injectable()
 export class WishlistsService {
-  private wishListsItems: wishlistsItem[] = [];
+  constructor(
+    @InjectRepository(Wishlist)
+    private readonly wishlistRepository: Repository<Wishlist>,
+  ) {}
 
-  find(userId: string) {
-    const items = this.wishListsItems.filter((item) => item.userId === userId);
-    return items;
+  findAll(userId: string) {
+    return this.wishlistRepository.findBy({ userId: userId });
   }
 
   create(userId: string, createItemDTO: CreateItemDTO) {
-    const newItem = Object.assign(createItemDTO, { userId: userId });
-    this.wishListsItems.push(newItem);
-    return;
+    const assignedObject = Object.assign(createItemDTO, { userId: userId });
+
+    const newItem = this.wishlistRepository.create(assignedObject);
+
+    return this.wishlistRepository.save(newItem);
   }
 
-  delete(itemId: string) {
-    const indexItem = this.wishListsItems.findIndex(
-      (item) => item.id === Number(itemId),
-    );
-
-    if (indexItem >= 0) {
-      this.wishListsItems.splice(indexItem, 1);
-      return;
+  async delete(itemId: string) {
+    const item = await this.wishlistRepository.findBy({ id: Number(itemId) });
+    if (!item) {
+      throw new NotFoundException(`Item with ID ${itemId} not found`);
     }
-
-    return;
+    return this.wishlistRepository.remove(item);
   }
 }
