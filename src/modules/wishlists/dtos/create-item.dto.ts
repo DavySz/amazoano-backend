@@ -1,9 +1,6 @@
 import { IsNumber, IsObject, IsString } from 'class-validator';
 
 export class CreateItemDTO {
-  @IsNumber()
-  id: number;
-
   @IsString()
   title: string;
 
