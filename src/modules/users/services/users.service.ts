@@ -7,6 +7,7 @@ import { User } from '../entities/user.entity';
 import { hash } from 'bcrypt';
 
 import { v4 } from 'uuid';
+import { TCreateUser } from '../interfaces/create-user';
 
 @Injectable()
 export class UsersService {
@@ -15,7 +16,12 @@ export class UsersService {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  async create(createUserDTO: CreateUserDTO) {
+  async findUserByEmail(email: string): Promise<User> {
+    const user = await this.userRepository.findOneBy({ email });
+    return user;
+  }
+
+  async create(createUserDTO: CreateUserDTO): Promise<TCreateUser> {
     const { email, first_name, last_name, password, phone } = createUserDTO;
     const passwordHash = await hash(password, 8);
 
@@ -28,7 +34,15 @@ export class UsersService {
       password: passwordHash,
     });
 
-    return this.userRepository.save(user);
+    await this.userRepository.save(user);
+
+    return {
+      userId: user.userId,
+      first_name,
+      last_name,
+      email,
+      phone,
+    };
   }
 
   async update(userId: string, updateUserDTO: UpdateUserDTO) {
