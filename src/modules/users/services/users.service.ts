@@ -16,7 +16,7 @@ export class UsersService {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  async findUserByEmail(email: string): Promise<User> {
+  async findByEmail(email: string): Promise<User> {
     const user = await this.userRepository.findOneBy({ email });
     return user;
   }
@@ -32,11 +32,13 @@ export class UsersService {
       first_name,
       userId: v4(),
       password: passwordHash,
+      created_at: new Date().toISOString(),
     });
 
     await this.userRepository.save(user);
 
     return {
+      created_at: user.created_at,
       userId: user.userId,
       first_name,
       last_name,
@@ -49,6 +51,7 @@ export class UsersService {
     const user = await this.userRepository.preload({
       userId: userId,
       ...updateUserDTO,
+      updated_at: new Date().toISOString(),
     });
 
     if (!user) {

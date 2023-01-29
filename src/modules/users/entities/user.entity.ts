@@ -19,4 +19,10 @@ export class User {
 
   @Column()
   phone: string;
+
+  @Column()
+  created_at: string;
+
+  @Column({ nullable: true })
+  updated_at: string;
 }
