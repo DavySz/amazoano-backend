@@ -4,7 +4,7 @@ import { ICategories } from '../interfaces/categories';
 import { IProduct } from '../interfaces/product';
 
 @Injectable()
-export class FakeStoreService {
+export class ProductsService {
   async getAllProducts(): Promise<IProduct[]> {
     const response = await fakeStoreApi.get(`/products`);
     return response.data;
